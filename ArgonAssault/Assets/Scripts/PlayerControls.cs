@@ -1,16 +1,24 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerControls : MonoBehaviour
 {
-    [SerializeField] float controlSpeed = 10f;
+    [Header("General Setup Settings")]
+    [Tooltip("How fast ship moves up/down")] [SerializeField] float controlSpeed = 10f;
     [SerializeField] float xRange = 10f;
     [SerializeField] float yRange = 5f;
 
+    [Header("Laser Gun Array")]
+    [Tooltip("Add all player lasers here")] [SerializeField] GameObject[] lasers;
+
+    [Header("Screen Position Based Tuning")]
     [SerializeField] float positionPitchFactor = -2f;
-    [SerializeField] float controlPitchFactor = -10f;
     [SerializeField] float positionYawFactor = 2f; // Rick's Code
+
+    [Header("Player Input Based Tuning")]
+    [SerializeField] float controlPitchFactor = -10f;
     [SerializeField] float controlRollFactor = -20f; // Rick's Code
     //[SerializeField] float controlYawFactor = 20f; // My code
     //[SerializeField] float controlrollFactor = -20f; // My code
@@ -21,6 +29,28 @@ public class PlayerControls : MonoBehaviour
     {
         ProcessTranslation();
         ProcessRotation();
+        ProcessFiring();
+    }
+
+    void ProcessFiring()
+    {
+        if (Input.GetButton("Fire1"))
+        {
+            SetLasersActive(true);
+        }
+        else
+        {
+            SetLasersActive(false);
+        }
+    }
+
+    void SetLasersActive(bool isActive)
+    {
+        foreach(GameObject laser in lasers)
+        {
+            var emissionModule = laser.GetComponent<ParticleSystem>().emission;
+            emissionModule.enabled = isActive;
+        }
     }
 
     void ProcessRotation()
